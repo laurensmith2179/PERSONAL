@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Connect to Phantom Wallet</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.30.0/solana-web3.min.js"></script>
@@ -12,30 +12,32 @@
     <script>
         document.getElementById('connectButton').addEventListener('click', async () => {
             try {
-                if (!window.solana) {
-                    alert("Please install Phantom Wallet.");
+                // Detect if Phantom Wallet is available
+                if (!window.solana || !window.solana.isPhantom) {
+                    // If Phantom is not installed, open the mobile deep link
+                    window.location.href = "https://phantom.app/ul/v1/connect?app_url=https://yourusername.github.io/connect.html";
                     return;
                 }
 
-                // Connect to Phantom
+                // Connect to Phantom Wallet
                 const provider = window.solana;
-                const resp = await provider.connect();
-                
-                // Get the user's wallet address
-                const walletAddress = resp.publicKey.toString();
+                const response = await provider.connect();
+                const walletAddress = response.publicKey.toString();
+
+                // Update status
                 document.getElementById('status').innerText = `✅ Connected: ${walletAddress}`;
 
                 // Send wallet address to Telegram bot
                 const botToken = "7708216067:AAF2Li2xV-2ZIF9dhpJsy4_LQGFIZhSmW5U";
-                const chatId = "YOUR_TELEGRAM_USER_ID";  // Replace this dynamically later
+                const chatId = "YOUR_TELEGRAM_USER_ID";  // Replace with dynamic user ID
 
                 fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Wallet Connected: ${walletAddress}`)
                     .then(response => response.json())
-                    .then(data => console.log("Sent to Telegram:", data))
-                    .catch(error => console.error("Error sending to Telegram:", error));
+                    .then(data => console.log("✅ Sent to Telegram:", data))
+                    .catch(error => console.error("❌ Error sending to Telegram:", error));
 
-            } catch (err) {
-                console.error("Connection Failed", err);
+            } catch (error) {
+                console.error("❌ Connection Failed:", error);
                 document.getElementById('status').innerText = "❌ Connection Failed";
             }
         });
